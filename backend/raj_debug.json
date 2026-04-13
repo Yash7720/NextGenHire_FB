@@ -1,0 +1,115 @@
+{
+  "user": {
+    "_id": "69ccbabfd25a29bb000d31bc",
+    "name": "Raj",
+    "email": "raj@gmail.com",
+    "password": "$2b$10$c7FEV4ptqg9s91DU27ri1e6StMnVI2ST/nlVXorsiKfgrmJyvI9Cq",
+    "role": "student",
+    "bio": "",
+    "age": null,
+    "degree": "",
+    "avatar": "⭐",
+    "earnedBadges": [],
+    "appliedJobs": [
+      "69ccb18332e0a79556b32719",
+      "69ccb18332e0a79556b32719",
+      "69ccb0f732e0a79556b326ed",
+      "69ccafce32e0a79556b32691",
+      "69ccaf4932e0a79556b32668",
+      "69cca9d511cf7ecb666a8e5a",
+      "69c5752ce2dbeb558b0ba157"
+    ],
+    "candidateStatus": "pending",
+    "enrolledCourses": [],
+    "xp": 170,
+    "streak": 1,
+    "coursesCompleted": 0,
+    "lastLoginDate": "2026-04-01T06:27:14.156Z",
+    "skills": [],
+    "xpHistory": [],
+    "createdAt": "2026-04-01T06:27:11.701Z",
+    "updatedAt": "2026-04-01T06:27:43.147Z",
+    "__v": 7,
+    "score": 220,
+    "id": "69ccbabfd25a29bb000d31bc"
+  },
+  "apps": [
+    {
+      "_id": "69ccbacbd25a29bb000d3201",
+      "jobId": "69ccb18332e0a79556b32719",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:23.708Z",
+      "updatedAt": "2026-04-01T06:31:56.372Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    },
+    {
+      "_id": "69ccbacbd25a29bb000d3203",
+      "jobId": "69ccb18332e0a79556b32719",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:23.709Z",
+      "updatedAt": "2026-04-01T06:31:56.399Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    },
+    {
+      "_id": "69ccbaced25a29bb000d3217",
+      "jobId": "69ccb0f732e0a79556b326ed",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:26.778Z",
+      "updatedAt": "2026-04-01T06:31:56.420Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    },
+    {
+      "_id": "69ccbad1d25a29bb000d3226",
+      "jobId": "69ccafce32e0a79556b32691",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:29.978Z",
+      "updatedAt": "2026-04-01T06:31:56.441Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    },
+    {
+      "_id": "69ccbad5d25a29bb000d3236",
+      "jobId": "69ccaf4932e0a79556b32668",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:33.289Z",
+      "updatedAt": "2026-04-01T06:31:56.461Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    },
+    {
+      "_id": "69ccbad7d25a29bb000d324a",
+      "jobId": "69cca9d511cf7ecb666a8e5a",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:35.746Z",
+      "updatedAt": "2026-04-01T06:31:56.481Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    },
+    {
+      "_id": "69ccbadfd25a29bb000d328e",
+      "jobId": "69c5752ce2dbeb558b0ba157",
+      "applicantName": "Raj",
+      "email": "raj@gmail.com",
+      "status": "pending",
+      "createdAt": "2026-04-01T06:27:43.213Z",
+      "updatedAt": "2026-04-01T06:31:56.503Z",
+      "__v": 0,
+      "userId": "69ccbabfd25a29bb000d31bc"
+    }
+  ]
+}

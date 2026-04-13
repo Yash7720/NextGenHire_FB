@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.13.6",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.0",
+    "multer": "^2.1.1",
+    "multer-gridfs-storage": "^5.0.2",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.5",
+    "socket.io": "^4.8.3"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "1. Change directory: `cd backend`\r 2. Create `.env` file\r 3. Add your api_key as \r     `GEMINI_API_KEY=your_api_key`\r     `Port=5000`\r 4. To start server use command: `node chatbot.js`",
+  "main": "chatbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "69c5752ce2dbeb558b0ba157",
+    "title": "Backend Developer ",
+    "name": "Backend Developer",
+    "applicants": 2
+  },
+  {
+    "id": "69cca9d511cf7ecb666a8e5a",
+    "title": "MERN Stack Developer",
+    "name": "MERN Stack",
+    "applicants": 2
+  },
+  {
+    "id": "69ccaf4932e0a79556b32668",
+    "title": "UI/UX Designer",
+    "name": "UI/UX Designer",
+    "applicants": 2
+  },
+  {
+    "id": "69ccafce32e0a79556b32691",
+    "title": "Data Analyst",
+    "name": "Data Analyst",
+    "applicants": 2
+  },
+  {
+    "id": "69ccb0f732e0a79556b326ed",
+    "title": "Web Designer",
+    "name": "Web Designer",
+    "applicants": 2
+  },
+  {
+    "id": "69ccb18332e0a79556b32719",
+    "title": "React Developer",
+    "name": "React Developer",
+    "applicants": 4
+  }
+]

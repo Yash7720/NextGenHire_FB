@@ -1,0 +1,106 @@
+{
+  "courses": [
+    "cpp",
+    "css",
+    "html",
+    "javascript",
+    "python",
+    "react"
+  ],
+  "chaptersCount": 24,
+  "jsLessonsCount": 15,
+  "jsSamples": [
+    {
+      "course": "javascript",
+      "chapter": "JS Fundamentals",
+      "title": "Variables"
+    },
+    {
+      "course": "javascript",
+      "chapter": "JS Fundamentals",
+      "title": "Data Types"
+    },
+    {
+      "course": "javascript",
+      "chapter": "JS Fundamentals",
+      "title": "Operators"
+    },
+    {
+      "course": "javascript",
+      "chapter": "Functions",
+      "title": "Declaration"
+    },
+    {
+      "course": "javascript",
+      "chapter": "Functions",
+      "title": "Arrow Functions"
+    },
+    {
+      "course": "javascript",
+      "chapter": "Functions",
+      "title": "Closures"
+    },
+    {
+      "course": "javascript",
+      "chapter": "DOM Manipulation",
+      "title": "querySelector"
+    },
+    {
+      "course": "javascript",
+      "chapter": "DOM Manipulation",
+      "title": "Events"
+    },
+    {
+      "course": "javascript",
+      "chapter": "DOM Manipulation",
+      "title": "Dynamic Content"
+    },
+    {
+      "course": "javascript",
+      "chapter": "Async JavaScript",
+      "title": "Promises"
+    },
+    {
+      "course": "javascript",
+      "chapter": "Async JavaScript",
+      "title": "Async/Await"
+    },
+    {
+      "course": "javascript",
+      "chapter": "Async JavaScript",
+      "title": "Fetch API"
+    },
+    {
+      "course": "javascript",
+      "chapter": "ES6+ Features",
+      "title": "Destructuring"
+    },
+    {
+      "course": "javascript",
+      "chapter": "ES6+ Features",
+      "title": "Spread/Rest"
+    },
+    {
+      "course": "javascript",
+      "chapter": "ES6+ Features",
+      "title": "Modules"
+    }
+  ],
+  "es6Lessons": [
+    {
+      "course": "javascript",
+      "chapter": "ES6+ Features",
+      "title": "Destructuring"
+    },
+    {
+      "course": "javascript",
+      "chapter": "ES6+ Features",
+      "title": "Spread/Rest"
+    },
+    {
+      "course": "javascript",
+      "chapter": "ES6+ Features",
+      "title": "Modules"
+    }
+  ]
+}

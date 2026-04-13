@@ -1,0 +1,16 @@
+﻿[debug] Server starting...
+[dotenv@17.3.1] injecting env (2) from .env -- tip: ΓÜÖ∩╕Å  override existing env vars with { override: true }
+[debug] Dotenv loaded, MONGO_URI exists: true
+[server] Running on port 5001
+node : [leaderboardController] getLeaderboard error: Cannot call 
+`users.find()` before initial connection is complete if `bufferCommands = 
+false`. Make sure you `await mongoose.connect()` if you have `bufferCommands = 
+false`.
+At line:1 char:1
++ node server.js 2>&1 | Out-File -FilePath "server_debug.txt" -Encoding ...
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([leaderboardCon...mands = false`. 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[db] MongoDB connected

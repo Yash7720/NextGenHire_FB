@@ -104,11 +104,7 @@ export default function ForgotPassword() {
           </form>
         )}
 
-        <div className="mt-8 pt-6 border-t border-white/5 text-center">
-          <p className="text-xs text-slate-500 font-rajdhani tracking-wider">
-            RECOVERY SYSTEM v2.0 // ENCRYPTED
-          </p>
-        </div>
+
       </div>
     </div>
   )

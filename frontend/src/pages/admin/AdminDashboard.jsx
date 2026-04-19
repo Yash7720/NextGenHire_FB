@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import StatBox from '../../components/ui/StatBox'
 import ProgressBar from '../../components/ui/ProgressBar'
@@ -27,31 +27,27 @@ export default function AdminDashboard() {
   })
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    let mounted = true
+  const load = useCallback(async (isInitial = false) => {
+    try {
+      if (isInitial) setLoading(true)
+      const [lbData, sData] = await Promise.all([
+        leaderboardApi.fetchLeaderboard(),
+        adminApi.fetchDashboardStats()
+      ])
+      
+      const lbList = Array.isArray(lbData) ? lbData : (lbData?.leaderboard || lbData?.users || [])
 
-    const load = async () => {
-      try {
-        setLoading(true)
-        const [lbData, sData] = await Promise.all([
-          leaderboardApi.fetchLeaderboard(),
-          adminApi.fetchDashboardStats()
-        ])
-        
-        const lbList = Array.isArray(lbData) ? lbData : (lbData?.leaderboard || lbData?.users || [])
-
-        if (mounted) {
-          setLeaderboard(lbList)
-          if (sData) setStats(sData)
-        }
-      } catch (err) {
-        console.log('AdminDashboard load error', err)
-      } finally {
-        if (mounted) setLoading(false)
-      }
+      setLeaderboard(lbList)
+      if (sData) setStats(sData)
+    } catch (err) {
+      console.log('AdminDashboard load error', err)
+    } finally {
+      if (isInitial) setLoading(false)
     }
+  }, [])
 
-    load()
+  useEffect(() => {
+    load(true)
 
     const s = getSocket()
     
@@ -82,12 +78,11 @@ export default function AdminDashboard() {
     s.on('leaderboardUpdate', onUpdate)
 
     return () => {
-      mounted = false
       s.off('connect')
       s.off('disconnect')
       s.off('leaderboardUpdate', onUpdate)
     }
-  }, [])
+  }, [load])
 
   const topApplicants = useMemo(() => {
     const list = (Array.isArray(leaderboard) ? leaderboard : []).map((u) => {

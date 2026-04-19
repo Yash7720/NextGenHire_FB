@@ -18,16 +18,28 @@ function useLocalStorage(key, defaultValue) {
     }
   })
 
-  // Persist to localStorage whenever value changes
   useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify(value))
+      const stored = localStorage.getItem(key)
+      setValue(stored !== null ? JSON.parse(stored) : defaultValue)
     } catch {
-      // Silently ignore (e.g. private-browsing quota errors)
+      setValue(defaultValue)
     }
-  }, [key, value])
+  }, [key])
 
-  return [value, setValue]
+  const setValueWrapped = useCallback((val) => {
+    setValue(prev => {
+      const newVal = typeof val === 'function' ? val(prev) : val;
+      try {
+        localStorage.setItem(key, JSON.stringify(newVal));
+      } catch {
+         // Silently ignore
+      }
+      return newVal;
+    });
+  }, [key]);
+
+  return [value, setValueWrapped]
 }
 
 // ── Default state values ──────────────────────────────────────────────────────

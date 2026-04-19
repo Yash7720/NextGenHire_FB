@@ -60,6 +60,20 @@ export async function deleteCandidate(userId) {
   }
 }
 
+/**
+ * Delete a job posting and all its applications.
+ * @param {string} jobId
+ */
+export async function deleteJob(jobId) {
+  try {
+    const res = await apiRequest(`${BASE}/jobs/${jobId}`, { method: 'DELETE' })
+    return res?.success ?? false
+  } catch (err) {
+    console.error('[adminApi] deleteJob failed:', err?.message)
+    return false
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SKILL RANKINGS
 // ─────────────────────────────────────────────────────────────────────────────

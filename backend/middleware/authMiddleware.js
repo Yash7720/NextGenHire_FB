@@ -25,7 +25,6 @@ exports.protect = async (req, res, next) => {
 
     const secret  = process.env.JWT_SECRET || "secretkey";
     const decoded = jwt.verify(token, secret);
-    console.log(`[debug] protect: decoded token id: ${decoded.id}, isAdmin: ${decoded.isAdmin}`);
 
     let user;
     if (decoded.isAdmin) {

@@ -257,15 +257,44 @@ exports.getAllJobs = async (req, res) => {
 // DELETE /api/admin/jobs/:id
 // ─────────────────────────────────────────────────────────────────────────────
 exports.deleteJob = async (req, res) => {
+  const { id } = req.params;
+  const mongoose = require("mongoose");
+  
   try {
-    await Job.findByIdAndDelete(req.params.id);
+    console.log(`[adminController] Request to delete job. ID received: "${id}"`);
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      console.error(`[adminController] Invalid Job ID format: ${id}`);
+      return res.status(400).json({ success: false, error: "Invalid Job ID format" });
+    }
+    
+    // Perform cascading delete
+    const [jobDeleted, applicationsDeleted] = await Promise.all([
+      Job.findByIdAndDelete(id),
+      Application.deleteMany({ jobId: new mongoose.Types.ObjectId(id) })
+    ]);
+
+    if (!jobDeleted) {
+      console.warn(`[adminController] Job not found in DB: ${id}`);
+      return res.status(404).json({ success: false, error: "Job posting not found" });
+    }
+
+    console.log(`[adminController] Successfully deleted job "${jobDeleted.title}". Applications removed: ${applicationsDeleted.deletedCount}`);
     
     // Trigger real-time refresh
     req.app.get("io")?.emit("leaderboardUpdate");
 
-    res.json({ message: "Job deleted successfully" });
+    res.json({ 
+      success: true, 
+      message: "Job deleted successfully",
+      details: {
+        title: jobDeleted.title,
+        applicationsRemoved: applicationsDeleted.deletedCount
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(`[adminController] CRITICAL ERROR in deleteJob:`, error.message);
+    res.status(500).json({ success: false, error: "Internal server error during job deletion" });
   }
 };
 

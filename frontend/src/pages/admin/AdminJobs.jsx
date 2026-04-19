@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Modal from '../../components/ui/Modal'
 import * as jobApi from '../../services/jobApi'
+import * as adminApi from '../../services/adminApi'
+import { getSocket } from '../../services/socket'
 
 export default function AdminJobs() {
   const [jobs, setJobs] = useState([])
@@ -9,29 +11,57 @@ export default function AdminJobs() {
 
   const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }))
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await jobApi.fetchJobs()
-        const list = Array.isArray(data) ? data : (data?.jobs || [])
-        const normalized = list.map((j) => ({
-          ...j,
-          id: j._id || j.id,
-          logo: j.logo || '🏢',
-          applicants: typeof j.applicants === 'number' ? j.applicants : 0,
-          type: j.type || 'Full-time',
-          level: j.level || 'Mid',
-          skills: Array.isArray(j.skills) ? j.skills : [],
-          salary: j.salary || '',
-          deadline: j.deadline || '',
-        }))
-        setJobs(normalized)
-      } catch (err) {
-        console.log('AdminJobs fetchJobs error', err)
-      }
+  const load = useCallback(async () => {
+    try {
+      const data = await jobApi.fetchJobs()
+      const list = Array.isArray(data) ? data : (data?.jobs || [])
+      const normalized = list.map((j) => ({
+        ...j,
+        id: j._id || j.id,
+        logo: j.logo || '🏢',
+        applicants: typeof j.applicants === 'number' ? j.applicants : 0,
+        type: j.type || 'Full-time',
+        level: j.level || 'Mid',
+        skills: Array.isArray(j.skills) ? j.skills : [],
+        salary: j.salary || '',
+        deadline: j.deadline || '',
+      }))
+      setJobs(normalized)
+    } catch (err) {
+      console.log('AdminJobs fetchJobs error', err)
     }
-    load()
   }, [])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  // Real-time socket refresh
+  useEffect(() => {
+    const s = getSocket()
+    s.on('leaderboardUpdate', load)
+    return () => s.off('leaderboardUpdate', load)
+  }, [load])
+
+  const handleDeleteJob = async (jobId, title) => {
+    if (!window.confirm(`⚠️ DELETE JOB?\n\nAre you sure you want to delete "${title.toUpperCase()}"?\nThis will also remove all candidate applications for this role.`)) {
+      return
+    }
+
+    try {
+      // Optimistic UI update
+      setJobs(prev => prev.filter(j => j.id !== jobId))
+      
+      const success = await adminApi.deleteJob(jobId)
+      if (!success) {
+        alert('Failed to delete job. Please try again.')
+        load() // Rollback
+      }
+    } catch (err) {
+      console.error('handleDeleteJob error', err)
+      load() // Rollback
+    }
+  }
 
   const post = async () => {
     if (!form.title || !form.company) return
@@ -80,29 +110,46 @@ export default function AdminJobs() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {jobs.map(job => (
-          <div key={job.id} className="card p-5 rounded-xl">
-            <div className="flex gap-3 items-center mb-3">
-              <div className="text-3xl">{job.logo}</div>
-              <div>
-                <div className="font-semibold text-sm">{job.title}</div>
-                <div className="text-[12px] text-slate-500">{job.company}</div>
+        {jobs.map(job => {
+          const jobIdStr = String(job.id || job._id)
+          return (
+            <div key={jobIdStr} className="card p-5 rounded-xl group relative overflow-hidden">
+              {/* Delete Button - Top Right */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDeleteJob(jobIdStr, job.title)
+                }}
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-2 rounded-lg bg-bg-3 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all text-xs z-10 scale-90 hover:scale-100"
+                title="Delete Job Posting"
+              >
+                🗑️
+              </button>
+
+              <div className="flex gap-3 items-center mb-3">
+                <div className="text-3xl">{job.logo}</div>
+                <div>
+                  <div className="font-semibold text-sm">{job.title}</div>
+                  <div className="text-[12px] text-slate-500">{job.company}</div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {(job.skills || []).map(s => <span key={s} className="chip chip-cyan text-[10px]">{s}</span>)}
+              </div>
+              <div className="flex gap-2 mb-2">
+                <span className="chip chip-purple text-[10px]">{job.type}</span>
+                <span className="chip chip-orange text-[10px]">{job.level}</span>
+              </div>
+              <div className="flex justify-between text-[12px]">
+                <span className="text-slate-400">{job.type}</span>
+                <span className="font-orbitron text-neon-green">{job.applicants} applied</span>
+              </div>
+              <div className="mt-3 pt-3 border-t border-border/40">
+                <div className="text-[11px] text-gold">{job.salary} · Deadline: {job.deadline}</div>
               </div>
             </div>
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {(job.skills || []).map(s => <span key={s} className="chip chip-cyan text-[10px]">{s}</span>)}
-            </div>
-            <div className="flex gap-2 mb-2">
-              <span className="chip chip-purple text-[10px]">{job.type}</span>
-              <span className="chip chip-orange text-[10px]">{job.level}</span>
-            </div>
-            <div className="flex justify-between text-[12px]">
-              <span className="text-slate-400">{job.type}</span>
-              <span className="font-orbitron text-neon-green">{job.applicants} applied</span>
-            </div>
-            <div className="text-[11px] text-gold mt-1">{job.salary} · Deadline: {job.deadline}</div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <Modal open={open} onClose={() => setOpen(false)}>

@@ -27,7 +27,7 @@ function JobCard({ job, applied, onClick }) {
         <span className="font-orbitron text-neon-green">{job.salary}</span>
         <span className="text-slate-500">Deadline: {job.deadline}</span>
       </div>
-      <div className="text-[11px] text-slate-600 mt-1.5">{job.applicants} applicants</div>
+
     </div>
   )
 }
@@ -130,6 +130,11 @@ export default function Jobs() {
         setUploading(false)
         return
       }
+
+      // Immediately update local applicant count for instant UI feedback
+      setJobs(prev => prev.map(j =>
+        j.id === selected.id ? { ...j, applicants: (j.applicants || 0) + 1 } : j
+      ))
 
       // Update local state (XP / applied list) via the existing context function
       applyJob(selected.id, true)

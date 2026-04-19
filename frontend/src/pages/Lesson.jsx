@@ -12,11 +12,13 @@ export default function Lesson() {
   const [lessons, setLessons] = useState([]);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const fetchLessons = async () => {
       try {
         setLoading(true);
+        setErrorMsg('');
         
         let mappedCourse = course;
         if (mappedCourse === 'js') mappedCourse = 'javascript';
@@ -31,6 +33,7 @@ export default function Lesson() {
         }
       } catch (error) {
         console.error("Failed to fetch lessons:", error);
+        setErrorMsg(error.message || "Failed to load lessons from server.");
       } finally {
         setLoading(false);
       }
@@ -47,6 +50,22 @@ export default function Lesson() {
     return (
       <div className="flex items-center justify-center p-10 h-full">
         <div className="font-orbitron animate-pulse text-cyan">Loading Lessons...</div>
+      </div>
+    );
+  }
+
+  if (errorMsg) {
+    return (
+      <div className="flex items-center justify-center p-10 h-full">
+        <div className="bg-red-500/10 border border-red-500/30 p-6 rounded-xl max-w-lg text-center">
+          <div className="text-4xl mb-3">⚠️</div>
+          <h2 className="font-orbitron text-red-400 mb-2">Connection Error</h2>
+          <p className="text-slate-300 text-sm">{errorMsg}</p>
+          <div className="mt-6 text-left bg-black/30 p-4 rounded-lg text-xs text-slate-400 font-mono">
+            <strong>Hint:</strong> If you recently changed Wi-Fi networks or moved to a hotspot, your new network IP was blocked by MongoDB Atlas. <br/><br/>
+            Go to MongoDB Atlas → Network Access → Add IP Address → "Allow Access From Anywhere" (0.0.0.0/0). Then <b>Restart your backend server.</b>
+          </div>
+        </div>
       </div>
     );
   }

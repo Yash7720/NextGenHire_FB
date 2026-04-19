@@ -1,6 +1,8 @@
 import { io } from 'socket.io-client'
 
-const BASE_URL = 'http://localhost:5002'
+const BASE_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+  ? `http://${window.location.hostname}:5002`
+  : 'http://localhost:5002'
 
 let socket
 

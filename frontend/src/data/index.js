@@ -49,12 +49,12 @@ export const COURSES = [
     description: 'The most versatile language on earth. From scripting to AI — Python does it all.',
   },
   {
-    id: 'cpp', title: 'C++', icon: '⚙️', color: '#00599c',
+    id: 'cpp', title: 'CPP', icon: '⚙️', color: '#00599c',
     level: 'Advanced', xp: 400,
     chapters: [
-      { id: 1, title: 'C++ Basics',         subs: ['Syntax', 'Data Types', 'I/O'] },
+      { id: 1, title: 'CPP Basics',          subs: ['Syntax', 'Data Types', 'I/O'] },
       { id: 2, title: 'Pointers & Memory',   subs: ['Pointers', 'References', 'Dynamic Allocation'] },
-      { id: 3, title: 'OOP in C++',          subs: ['Classes', 'Constructors', 'Polymorphism'] },
+      { id: 3, title: 'OOP in CPP',          subs: ['Classes', 'Constructors', 'Polymorphism'] },
       { id: 4, title: 'STL',                 subs: ['Vectors', 'Maps', 'Algorithms'] },
       { id: 5, title: 'Templates',           subs: ['Function Templates', 'Class Templates', 'Metaprogramming'] },
     ],

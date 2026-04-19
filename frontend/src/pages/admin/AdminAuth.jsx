@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-
-const API_URL = 'http://localhost:5002/api/auth'
+import { apiRequest } from '../../services/http'
 
 export default function AdminAuth() {
   const [email, setEmail] = useState('')
@@ -17,14 +15,18 @@ export default function AdminAuth() {
     setError('')
 
     try {
-      const res = await axios.post(`${API_URL}/admin-login`, { email, password })
-      if (res.data.success) {
-        localStorage.setItem('token', res.data.token)
-        localStorage.setItem('user', JSON.stringify(res.data.user))
+      const res = await apiRequest('/api/auth/admin-login', { 
+        method: 'POST',
+        body: { email, password } 
+      })
+      
+      if (res.success) {
+        localStorage.setItem('token', res.token)
+        localStorage.setItem('user', JSON.stringify(res.user))
         nav('/admin/dashboard')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'System Authentication Failed')
+      setError(err?.message || 'System Authentication Failed')
     } finally {
       setLoading(false)
     }

@@ -17,8 +17,9 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "1. Change directory: `cd backend`\r 2. Create `.env` file\r 3. Add your api_key as \r     `GEMINI_API_KEY=your_api_key`\r     `Port=5000`\r 4. To start server use command: `node chatbot.js`",
-  "main": "chatbot.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

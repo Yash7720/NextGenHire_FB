@@ -1,8 +1,9 @@
 import { io } from 'socket.io-client'
 
-const BASE_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-  ? `http://${window.location.hostname}:5002`
-  : 'http://localhost:5002'
+const BASE_URL = import.meta.env.VITE_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+    ? `http://${window.location.hostname}:5002` 
+    : 'http://localhost:5002')
 
 let socket
 

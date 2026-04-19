@@ -1,7 +1,9 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 
+const rawBase = import.meta.env.VITE_API_URL || 
   (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
     ? `http://${window.location.hostname}:5002` 
     : 'http://localhost:5002');
+
+const BASE_URL = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
 
 async function parseJsonSafe(res) {
   try {

@@ -171,3 +171,5 @@ server.listen(PORT, () => {
 // Secure API routes with authentication middleware
 
 // Add input validation to user registration
+
+// Set up initial database connection logic

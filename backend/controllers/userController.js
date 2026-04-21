@@ -368,3 +368,5 @@ exports.seedTestData = async (req, res) => {
 // Update JWT expiration and security headers
 
 // Optimize database query performance for users
+
+// Define User schema and validation rules

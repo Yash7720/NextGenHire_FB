@@ -39,3 +39,4 @@ router.get("/download/:id", downloadResume);
 router.delete("/application/:id", deleteApplication);
 
 module.exports = router;
+// Refactor prompt generation for Gemini API - update 2

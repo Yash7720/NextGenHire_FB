@@ -207,3 +207,5 @@ exports.deleteProject = async (req, res) => {
     res.status(500).json({ success: false, error: "Delete failed." });
   }
 };
+
+// Update project submission endpoints - update 3

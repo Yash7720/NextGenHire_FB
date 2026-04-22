@@ -507,7 +507,7 @@ function QuizModal({ open, onClose, courseId, onComplete }) {
 }
 
 // ── CourseDetail ───────────────────────────────────────────────────────────────
-function CourseDetail({ course, completedChapters, completeChapter, quizScores, saveQuizScore, completedProjects, completeProject, gainXP, onBack }) {
+function CourseDetail({ course, completedChapters, completeChapter, quizScores, saveQuizScore, completedProjects, completeProject, gainXP, viewedLessons, onBack }) {
   const navigate = useNavigate()
   const [openChap, setOpenChap]                 = useState(null)
   const [quizOpen, setQuizOpen]                 = useState(false)
@@ -601,9 +601,27 @@ function CourseDetail({ course, completedChapters, completeChapter, quizScores, 
                     ))}
                   </div>
                   {!isDone
-                    ? <button className="btn btn-md btn-cyan" onClick={() => completeChapter(course.id, ch.id)}>
-                        ✅ Mark Complete (+5 XP)
-                      </button>
+                    ? (() => {
+                        const viewedCount = (viewedLessons[course.id]?.[ch.title] || []).length;
+                        const isRead = viewedCount >= ch.subs.length;
+                        return (
+                          <div className="flex flex-col gap-2 items-start">
+                            {!isRead && (
+                               <div className="flex items-center gap-2 text-[11px] font-orbitron text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                                 <span>📖 PROGRESS: {viewedCount}/{ch.subs.length} LESSONS READ</span>
+                               </div>
+                            )}
+                            <button 
+                              className={`btn btn-md ${isRead ? 'btn-cyan' : 'btn-outline border-slate-700 text-slate-500 cursor-not-allowed opacity-60'}`} 
+                              onClick={() => isRead && completeChapter(course.id, ch.id)}
+                              disabled={!isRead}
+                              title={!isRead ? `Read all ${ch.subs.length} lessons to unlock` : ''}
+                            >
+                              {isRead ? '✅ Mark Complete (+5 XP)' : '🔒 Read all lessons to unlock'}
+                            </button>
+                          </div>
+                        )
+                      })()
                     : <span className="text-neon-green text-sm font-semibold">✓ Chapter Completed!</span>
                   }
                 </div>
@@ -673,7 +691,7 @@ function CourseDetail({ course, completedChapters, completeChapter, quizScores, 
 
 // ── Main Courses Page ──────────────────────────────────────────────────────────
 export default function Courses() {
-  const { enrolledCourses, enroll, completedChapters, completeChapter, quizScores, saveQuizScore, completedProjects, completeProject, gainXP } = useOutletContext()
+  const { enrolledCourses, enroll, completedChapters, completeChapter, quizScores, saveQuizScore, completedProjects, completeProject, gainXP, viewedLessons } = useOutletContext()
   const [searchParams, setSearchParams] = useSearchParams()
   
   const [selected, setSelected] = useState(() => {
@@ -694,6 +712,7 @@ export default function Courses() {
         completedProjects={completedProjects}
         completeProject={completeProject}
         gainXP={gainXP}
+        viewedLessons={viewedLessons}
         onBack={() => {
           setSelected(null)
           searchParams.delete('courseId')

@@ -29,7 +29,7 @@ exports.getLessonsByCourseAndChapter = async (req, res) => {
     const lessons = await Lesson.find({ 
       course: new RegExp(`^${escapeRegex(course)}$`, 'i'), 
       chapter: new RegExp(`^${escapeRegex(chapter)}$`, 'i') 
-    });
+    }).sort({ order: 1 });
     
     res.json(lessons);
   } catch (error) {

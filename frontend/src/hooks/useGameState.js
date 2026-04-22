@@ -68,6 +68,7 @@ export function useGameState() {
   const [quizScores,         setQuizScores]         = useLocalStorage(`${ns}_quizScores`,         {})
   const [completedProjects,  setCompletedProjects]  = useLocalStorage(`${ns}_completedProjects`,  [])
   const [lastSpinDate,       setLastSpinDate]       = useLocalStorage(`${ns}_lastSpinDate`,       null)
+  const [viewedLessons,      setViewedLessons]      = useLocalStorage(`${ns}_viewedLessons`,      {})
 
   // Logged-in user (from localStorage set by Auth)
   const [user, setUser] = useState(() => userApi.getCurrentUser())
@@ -331,6 +332,21 @@ export function useGameState() {
     setQuizScores(prev => ({ ...prev, [courseId]: score }))
     gainXP(50)  // syncs to server inside gainXP
   }, [setQuizScores, gainXP])
+
+  const markLessonAsViewed = useCallback((courseId, chapterId, lessonTitle) => {
+    setViewedLessons(prev => {
+      const courseData = prev[courseId] || {}
+      const chapterData = courseData[chapterId] || []
+      if (chapterData.includes(lessonTitle)) return prev
+      return {
+        ...prev,
+        [courseId]: {
+          ...courseData,
+          [chapterId]: [...chapterData, lessonTitle]
+        }
+      }
+    })
+  }, [setViewedLessons])
 
   const completeProject = useCallback((courseId) => {
     setCompletedProjects(prev => {
@@ -688,7 +704,7 @@ export function useGameState() {
     showXP, xpAmount,
     completedChapters, enrolledCourses, appliedJobs,
     notifications, unreadCount,
-    claimedQuests, quizScores, completedProjects,
+    claimedQuests, quizScores, completedProjects, viewedLessons,
     canSpinToday,
     user,
     dailyQuests,
@@ -697,6 +713,7 @@ export function useGameState() {
     // Actions
     gainXP, completeChapter, enroll, applyJob,
     markNotifRead,
+    markLessonAsViewed,
     claimQuest, // legacy local claim
     claimQuestServer,
     saveQuizScore,

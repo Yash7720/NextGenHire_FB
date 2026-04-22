@@ -83,8 +83,11 @@ export default function AdminCandidates() {
     setCandidates(prev => prev.filter(c => c._id !== userId))
 
     const success = await deleteCandidate(userId)
-    if (!success) {
-      alert("Failed to delete candidate. Please try again.")
+    if (success) {
+      // Deletion successful, no need to alert if UI already updated, but nice to confirm
+      console.log(`[AdminCandidates] Candidate ${name} deleted successfully.`);
+    } else {
+      alert("FAIL: Unable to delete candidate. They may have already been removed or your session may have expired.")
       load() // Refresh to restore if failed
     }
   }

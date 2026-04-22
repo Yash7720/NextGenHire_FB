@@ -36,6 +36,24 @@ export async function apiRequest(path, { method = 'GET', body, token, headers } 
   if (!res.ok) {
     const message = data?.message || data?.error || `Request failed: ${res.status}`
     const err = new Error(message)
+      if (res.status === 401) {
+        err.message = 'Invalid or expired token'
+        
+        // 1. Only clear and redirect if we actually attempted to use a token
+        if (activeToken) {
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+
+          // 2. Prevent infinite loops if already on login pages
+          const cur = window.location.pathname
+          if (cur !== '/signin' && cur !== '/admin/login') {
+            setTimeout(() => {
+              const isAdminPath = path.startsWith('/api/admin')
+              window.location.href = isAdminPath ? '/admin/login' : '/signin'
+            }, 100)
+          }
+        }
+      }
     err.status = res.status
     err.data = data
     throw err

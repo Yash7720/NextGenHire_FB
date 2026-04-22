@@ -8,7 +8,7 @@ export default function Lesson() {
   const { course, chapter } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { enroll } = useOutletContext();
+  const { enroll, markLessonAsViewed } = useOutletContext();
   const [lessons, setLessons] = useState([]);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,6 +45,12 @@ export default function Lesson() {
       enroll(course);
     }
   }, [course, chapter, enroll]);
+
+  useEffect(() => {
+    if (selectedLesson) {
+      markLessonAsViewed(course, chapter, selectedLesson.title)
+    }
+  }, [selectedLesson, course, chapter, markLessonAsViewed]);
 
   if (loading) {
     return (

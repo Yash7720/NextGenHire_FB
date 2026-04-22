@@ -29,21 +29,21 @@ exports.deleteUser = async (req, res) => {
 
   try {
     // Perform cascading delete in parallel for speed
-    const results = await Promise.all([
+    const [userDeleted, apps, notifications, projects, quests] = await Promise.all([
       User.findByIdAndDelete(userId),
       Application.deleteMany({ userId }),
       Notification.deleteMany({ userId }),
-      Project.deleteMany({ userId }),
+      Project.deleteMany({ studentId: userId }), // Fixed: Project model uses studentId
       Quest.deleteMany({ userId }),
     ]);
 
-    const userDeleted = results[0];
     if (!userDeleted) {
       console.warn(`[adminController] Delete failed: User ${userId} not found.`);
       return res.status(404).json({ success: false, error: "User not found" });
     }
 
     console.log(`[adminController] Successfully deleted user ${userId} and all associated items.`);
+    console.log(`[adminController] Cascade results -> Apps: ${apps.deletedCount}, Notifs: ${notifications.deletedCount}, Projects: ${projects.deletedCount}, Quests: ${quests.deletedCount}`);
     
     // Trigger real-time refresh
     req.app.get("io")?.emit("leaderboardUpdate");
@@ -52,10 +52,10 @@ exports.deleteUser = async (req, res) => {
       success: true, 
       message: "User and all associated data deleted successfully",
       details: {
-        applications: results[1]?.deletedCount || 0,
-        notifications: results[2]?.deletedCount || 0,
-        projects: results[3]?.deletedCount || 0,
-        quests: results[4]?.deletedCount || 0
+        applications: apps.deletedCount || 0,
+        notifications: notifications.deletedCount || 0,
+        projects: projects.deletedCount || 0,
+        quests: quests.deletedCount || 0
       }
     });
   } catch (error) {

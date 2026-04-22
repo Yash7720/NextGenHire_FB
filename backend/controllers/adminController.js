@@ -394,3 +394,5 @@ exports.getDashboardStats = async (req, res) => {
 // Refactor route structure for better scalability
 
 // Finalize core authentication flow
+
+// Implement JWT generation and verification

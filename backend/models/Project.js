@@ -82,3 +82,5 @@ const ProjectSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Project", ProjectSchema, "projects");
+
+// Add error handling for application routes - update 4

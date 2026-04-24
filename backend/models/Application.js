@@ -54,4 +54,5 @@ const applicationSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Export model
-module.exports = mongoose.model("Application", applicationSchema);
+module.exports = mongoose.model("Application", applicationSchema);
+// Optimize AI fallback responses - update 5

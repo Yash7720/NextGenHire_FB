@@ -8,34 +8,128 @@ const QUICK_PROMPTS = [
 ]
 
 /**
- * Simple helper to format message text (basic bolding and lists)
- * Since we don't have react-markdown, we'll convert line breaks and basic formatting.
+ * Renders markdown-like text with code blocks, inline code, bold, and lists.
+ * Ensures nothing overflows the chat bubble.
  */
 function FormatText({ text }) {
     if (!text) return null;
-    
-    // Split by newlines and handle simple markers
-    const lines = text.split('\n');
+
+    // Split text into code blocks and regular text segments
+    const codeBlockRegex = /```(\w*)\n?([\s\S]*?)```/g;
+    const segments = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = codeBlockRegex.exec(text)) !== null) {
+        // Push text before code block
+        if (match.index > lastIndex) {
+            segments.push({ type: 'text', content: text.slice(lastIndex, match.index) });
+        }
+        // Push code block
+        segments.push({ type: 'code', lang: match[1], content: match[2].trim() });
+        lastIndex = match.index + match[0].length;
+    }
+    // Push remaining text
+    if (lastIndex < text.length) {
+        segments.push({ type: 'text', content: text.slice(lastIndex) });
+    }
+
     return (
-        <div className="space-y-1.5">
-            {lines.map((line, i) => {
-                let processed = line.trim();
-                
-                // Handle bolding: **text**
-                const boldRegex = /\*\*(.*?)\*\*/g;
-                const parts = processed.split(boldRegex);
-                
-                // Handle list items starting with * or -
-                const isListItem = processed.startsWith('* ') || processed.startsWith('- ');
-                
-                return (
-                    <p key={i} className={`${isListItem ? 'pl-4 relative' : ''}`}>
-                        {isListItem && <span className="absolute left-1 text-cyan">•</span>}
-                        {parts.map((part, idx) => (
-                            idx % 2 === 1 ? <strong key={idx} className="text-white font-bold">{part}</strong> : part
-                        ))}
-                    </p>
-                );
+        <div style={{ overflowWrap: 'break-word', wordBreak: 'break-word', minWidth: 0 }}>
+            {segments.map((seg, si) => {
+                if (seg.type === 'code') {
+                    return (
+                        <pre key={si} style={{
+                            background: 'rgba(0,0,0,0.4)',
+                            border: '1px solid rgba(0,245,255,0.15)',
+                            borderRadius: 8,
+                            padding: '10px 12px',
+                            margin: '8px 0',
+                            fontSize: 12,
+                            lineHeight: 1.5,
+                            overflowX: 'auto',
+                            whiteSpace: 'pre',
+                            maxWidth: '100%',
+                        }}>
+                            <code style={{ color: '#a5f3fc', fontFamily: "'Fira Code', 'Consolas', monospace" }}>
+                                {seg.content}
+                            </code>
+                        </pre>
+                    );
+                }
+
+                // Regular text: split by newlines and render
+                const lines = seg.content.split('\n');
+                return lines.map((line, i) => {
+                    let processed = line.trim();
+                    if (!processed) return <div key={`${si}-${i}`} style={{ height: 6 }} />;
+
+                    // Handle inline code: `code`
+                    const inlineCodeRegex = /`([^`]+)`/g;
+                    // Handle bold: **text**
+                    const boldRegex = /\*\*(.*?)\*\*/g;
+                    // Handle list items
+                    const isListItem = processed.startsWith('* ') || processed.startsWith('- ');
+                    if (isListItem) processed = processed.slice(2);
+
+                    // Process inline formatting
+                    const renderFormatted = (str) => {
+                        const tokens = [];
+                        let remaining = str;
+                        let key = 0;
+
+                        while (remaining.length > 0) {
+                            const boldMatch = /\*\*(.*?)\*\*/.exec(remaining);
+                            const codeMatch = /`([^`]+)`/.exec(remaining);
+
+                            // Find earliest match
+                            let earliest = null;
+                            let type = null;
+                            if (boldMatch && (!earliest || boldMatch.index < earliest.index)) { earliest = boldMatch; type = 'bold'; }
+                            if (codeMatch && (!earliest || codeMatch.index < earliest.index)) { earliest = codeMatch; type = 'code'; }
+
+                            if (!earliest) {
+                                tokens.push(<span key={key++}>{remaining}</span>);
+                                break;
+                            }
+
+                            // Text before match
+                            if (earliest.index > 0) {
+                                tokens.push(<span key={key++}>{remaining.slice(0, earliest.index)}</span>);
+                            }
+
+                            if (type === 'bold') {
+                                tokens.push(<strong key={key++} style={{ color: '#fff', fontWeight: 700 }}>{earliest[1]}</strong>);
+                            } else {
+                                tokens.push(
+                                    <code key={key++} style={{
+                                        background: 'rgba(0,245,255,0.1)',
+                                        border: '1px solid rgba(0,245,255,0.2)',
+                                        borderRadius: 4,
+                                        padding: '1px 5px',
+                                        fontSize: '0.85em',
+                                        color: '#a5f3fc',
+                                        fontFamily: "'Fira Code', 'Consolas', monospace",
+                                    }}>{earliest[1]}</code>
+                                );
+                            }
+
+                            remaining = remaining.slice(earliest.index + earliest[0].length);
+                        }
+                        return tokens;
+                    };
+
+                    return (
+                        <p key={`${si}-${i}`} style={{
+                            margin: '3px 0',
+                            paddingLeft: isListItem ? 14 : 0,
+                            position: 'relative',
+                        }}>
+                            {isListItem && <span style={{ position: 'absolute', left: 2, color: '#00f5ff' }}>•</span>}
+                            {renderFormatted(processed)}
+                        </p>
+                    );
+                });
             })}
         </div>
     );
@@ -70,11 +164,24 @@ export default function ChatBot() {
     setInput('')
     setTyping(true)
 
+    // 1. Map internal messages to Gemini history format
+    // Gemini requires the FIRST message in history to be from the 'user'.
+    // We filter out the initial bot greeting to satisfy this.
+    const history = messages
+      .map(m => ({
+        role: m.from === 'user' ? 'user' : 'model',
+        parts: [{ text: m.text }]
+      }))
+      .filter((m, i) => !(i === 0 && m.role === 'model'))
+
     try {
       const res = await fetch("http://localhost:5002/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed })
+        body: JSON.stringify({ 
+          message: trimmed,
+          history: history 
+        })
       })
 
       const data = await res.json()
@@ -148,6 +255,7 @@ export default function ChatBot() {
                         ? 'bg-cyan/10 border border-cyan/20 text-slate-200 rounded-2xl rounded-tr-none' 
                         : 'bg-[#161b2e] border border-white/5 text-slate-300 rounded-2xl rounded-tl-none'
                     }`}
+                    style={{ overflow: 'hidden', minWidth: 0 }}
                   >
                     {msg.from === 'bot' ? <FormatText text={msg.text} /> : msg.text}
                   </div>

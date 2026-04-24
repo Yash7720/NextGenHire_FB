@@ -129,6 +129,8 @@ app.use((req, res) => {
 // ─── MongoDB ──────────────────────────────────────────────────────────────────
 mongoose.set("bufferCommands", false);
 mongoose.connect(process.env.MONGO_URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: true,
   family: 4,
   serverSelectionTimeoutMS: 5000
 })

@@ -267,7 +267,15 @@ export default function Auth({ mode }) {
       }
     } catch (err) {
       // Pull the message the server sent back
-      const msg = err?.message || 'Something went wrong'
+      let msg = err?.message || 'Something went wrong'
+      
+      // Cleanup for technical SSL errors (e.g. Node/OpenSSL internal errors)
+      if (msg.includes('error:0A000438') || msg.includes('alert internal error')) {
+        msg = 'Database Connection Error (SSL Handshake Failed). Please check your internet or VPN settings.'
+      } else if (msg.includes('EADDRINUSE')) {
+        msg = 'Server Port Conflict. Please restart the backend.'
+      }
+      
       setErrorMsg(msg)
     } finally {
       setLoading(false)

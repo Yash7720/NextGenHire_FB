@@ -4,7 +4,11 @@ require('dotenv').config();
 async function surgicalRepair() {
   try {
     console.log('Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI, {
+      tls: true,
+      tlsAllowInvalidCertificates: true,
+      family: 4
+    });
     
     const Project = mongoose.connection.db.collection('projects');
     const User = mongoose.connection.db.collection('users');

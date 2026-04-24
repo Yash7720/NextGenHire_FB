@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const Notification = require("./models/Notification");
 const User = require("./models/User");
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { 
+  tls: true, 
+  tlsAllowInvalidCertificates: true,
+  family: 4 
+})
   .then(async () => {
     // Find the first user in the databse to send a notification to
     const user = await User.findOne();

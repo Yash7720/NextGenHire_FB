@@ -320,29 +320,30 @@ export default function Profile() {
   const displayXpHist = useMemo(() => {
     const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
     const now = new Date()
-    const curMonth = MONTHS[now.getMonth()]
-    const curYear = now.getFullYear()
-
-    // If we have real history from DB, use it and ensure current month is up-to-date
-    if (profile?.xpHistory?.length) {
-      const hist = profile.xpHistory.map(e => ({ month: e.month, xp: e.xp }))
-      // Update or add the current month's entry with live XP
-      const curEntry = hist.find(e => e.month === curMonth)
-      if (curEntry) {
-        curEntry.xp = Math.max(curEntry.xp, userXP)
-      } else {
-        hist.push({ month: curMonth, xp: userXP })
-      }
-      return hist
-    }
-
-    // No history yet — generate last 6 months with 0 XP + current month with actual XP
+    
+    // 1. Generate the last 6 months placeholders (0 XP)
     const result = []
-    for (let i = 5; i >= 1; i--) {
+    for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      result.push({ month: MONTHS[d.getMonth()], xp: 0 })
+      const mName = MONTHS[d.getMonth()]
+      result.push({ month: mName, xp: 0, year: d.getFullYear() })
     }
-    result.push({ month: curMonth, xp: userXP })
+
+    // 2. Fill in real data from DB if available
+    if (profile?.xpHistory?.length) {
+      profile.xpHistory.forEach(entry => {
+        const match = result.find(r => r.month === entry.month && r.year === entry.year)
+        if (match) match.xp = entry.xp
+      })
+    }
+
+    // 3. Always ensure current month shows LIVE userXP
+    const curMonthName = MONTHS[now.getMonth()]
+    const curEntry = result.find(r => r.month === curMonthName && r.year === now.getFullYear())
+    if (curEntry) {
+      curEntry.xp = Math.max(curEntry.xp, userXP || 0)
+    }
+
     return result
   }, [profile?.xpHistory, userXP])
 

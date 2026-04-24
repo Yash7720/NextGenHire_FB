@@ -148,3 +148,4 @@ const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
   console.log(`[server] Running on port ${PORT}`);
 });
+// Core configuration setup updated

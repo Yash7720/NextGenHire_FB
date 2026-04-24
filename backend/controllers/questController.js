@@ -179,6 +179,15 @@ exports.claimQuest = async (req, res) => {
     user.xp = (user.xp || 0) + quest.xp;
     quest.status = "claimed";
 
+    // Record XP snapshot for analytics chart
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const now = new Date();
+    const month = MONTHS[now.getMonth()];
+    const year = now.getFullYear();
+    const existingEntry = (user.xpHistory || []).find(e => e.month === month && e.year === year);
+    if (existingEntry) { existingEntry.xp = user.xp; }
+    else { user.xpHistory = user.xpHistory || []; user.xpHistory.push({ month, year, xp: user.xp }); }
+
     await Promise.all([user.save(), quest.save()]);
 
     // Emit leaderboard update (global) and profile update (local)

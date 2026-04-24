@@ -317,9 +317,34 @@ export default function Profile() {
   const displayDegree = profile?.degree || ''
   const displayAvatar = profile?.avatar || '⭐'
   const displayBio = profile?.bio || ''
-  const displayXpHist = profile?.xpHistory?.length
-    ? profile.xpHistory.map(e => ({ month: e.month, xp: e.xp }))
-    : [{ month: 'Now', xp: userXP }]
+  const displayXpHist = useMemo(() => {
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    const now = new Date()
+    const curMonth = MONTHS[now.getMonth()]
+    const curYear = now.getFullYear()
+
+    // If we have real history from DB, use it and ensure current month is up-to-date
+    if (profile?.xpHistory?.length) {
+      const hist = profile.xpHistory.map(e => ({ month: e.month, xp: e.xp }))
+      // Update or add the current month's entry with live XP
+      const curEntry = hist.find(e => e.month === curMonth)
+      if (curEntry) {
+        curEntry.xp = Math.max(curEntry.xp, userXP)
+      } else {
+        hist.push({ month: curMonth, xp: userXP })
+      }
+      return hist
+    }
+
+    // No history yet — generate last 6 months with 0 XP + current month with actual XP
+    const result = []
+    for (let i = 5; i >= 1; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      result.push({ month: MONTHS[d.getMonth()], xp: 0 })
+    }
+    result.push({ month: curMonth, xp: userXP })
+    return result
+  }, [profile?.xpHistory, userXP])
 
   // ── Merge local + DB applied jobs so new applications show instantly ──────────
   const mergedAppliedJobs = useMemo(() => {

@@ -9,6 +9,34 @@ function emitRefresh(req) {
   if (io) io.emit("leaderboardUpdate");
 }
 
+// ─── Helper: auto-record monthly XP snapshot ─────────────────────────────────
+// Called every time XP changes so the Profile analytics chart has data.
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function recordXpHistory(user) {
+  const now   = new Date();
+  const month = MONTHS[now.getMonth()];
+  const year  = now.getFullYear();
+
+  const existing = (user.xpHistory || []).find(
+    (e) => e.month === month && e.year === year
+  );
+
+  if (existing) {
+    existing.xp = user.xp; // Update current month's snapshot
+  } else {
+    user.xpHistory = user.xpHistory || [];
+    user.xpHistory.push({ month, year, xp: user.xp });
+  }
+
+  // Keep only last 12 entries
+  user.xpHistory.sort((a, b) =>
+    a.year !== b.year ? a.year - b.year : MONTHS.indexOf(a.month) - MONTHS.indexOf(b.month)
+  );
+  if (user.xpHistory.length > 12) {
+    user.xpHistory = user.xpHistory.slice(-12);
+  }
+}
+
 // ─── Helper: build safe user response (no password) ──────────────────────────
 function userPayload(user) {
   return {
@@ -47,6 +75,7 @@ exports.completeCourse = async (req, res) => {
     user.coursesCompleted += 1;
     user.xp              += 200;
     user.streak          += 1;
+    recordXpHistory(user);
 
     await user.save();
     emitRefresh(req);
@@ -106,6 +135,7 @@ exports.dailyLogin = async (req, res) => {
     user.streak        = wasYesterday ? user.streak + 1 : 1; // reset if gap > 1 day
     user.xp           += 50;
     user.lastLoginDate = new Date();
+    recordXpHistory(user);
 
     await user.save();
     
@@ -151,6 +181,7 @@ exports.addXp = async (req, res) => {
     if (!user) return res.status(404).json({ success: false, error: "User not found" });
 
     user.xp = (user.xp || 0) + xpToAdd;
+    recordXpHistory(user);
     await user.save();
 
     // Mapping XP amounts to quest types based on frontend gainXP() logic:

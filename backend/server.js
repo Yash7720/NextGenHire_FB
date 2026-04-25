@@ -149,3 +149,5 @@ server.listen(PORT, () => {
   console.log(`[server] Running on port ${PORT}`);
 });
 // Core configuration setup updated
+
+// Set up initial database connection logic

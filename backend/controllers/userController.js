@@ -346,3 +346,5 @@ exports.seedTestData = async (req, res) => {
 };
 
 // Auth controller updates
+
+// Define User schema and validation rules

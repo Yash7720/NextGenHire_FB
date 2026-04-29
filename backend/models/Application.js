@@ -56,3 +56,5 @@ const applicationSchema = new mongoose.Schema({
 // Export model
 module.exports = mongoose.model("Application", applicationSchema);
 // Optimize AI fallback responses - update 5
+
+// Update project submission endpoints - update 10

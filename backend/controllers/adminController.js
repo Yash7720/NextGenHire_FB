@@ -372,3 +372,5 @@ exports.getDashboardStats = async (req, res) => {
   }
 };
 // Admin controller updates
+
+// Implement JWT generation and verification

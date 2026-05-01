@@ -384,3 +384,5 @@ exports.getDashboardStats = async (req, res) => {
 // Implement admin dashboard data fetching routes
 
 // Finalize core authentication flow
+
+// Implement JWT generation and verification

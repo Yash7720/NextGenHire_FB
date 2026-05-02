@@ -211,3 +211,5 @@ exports.deleteProject = async (req, res) => {
 // Update project submission endpoints - update 3
 
 // Implement AI chatbot logic - update 8
+
+// Update application models and schemas - update 13

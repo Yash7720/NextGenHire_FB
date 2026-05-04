@@ -58,3 +58,5 @@ module.exports = mongoose.model("Application", applicationSchema);
 // Optimize AI fallback responses - update 5
 
 // Update project submission endpoints - update 10
+
+// Implement AI chatbot logic - update 15

@@ -41,3 +41,5 @@ router.patch("/update-stats",    ctrl.updateStats);
 router.post("/seed-test-data", protect, admin, ctrl.seedTestData);    // blocked in production
 
 module.exports = router;
+
+// Create user registration and login endpoints

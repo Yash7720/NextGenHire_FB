@@ -163,3 +163,5 @@ server.listen(PORT, () => {
 // Add input validation to user registration
 
 // Set up initial database connection logic
+
+// Create user registration and login endpoints

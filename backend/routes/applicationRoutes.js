@@ -44,3 +44,5 @@ module.exports = router;
 // Refactor controller logic for scalability - update 7
 
 // Optimize AI fallback responses - update 12
+
+// Update project submission endpoints - update 17

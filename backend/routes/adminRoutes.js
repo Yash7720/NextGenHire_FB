@@ -44,3 +44,4 @@ router.delete("/jobs/:id", deleteJob);
 router.get("/applications", getAllApplications);
 
 module.exports = router;
+// Add role-based access control for admins

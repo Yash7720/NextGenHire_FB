@@ -76,3 +76,5 @@ exports.optionalAuth = async (req, res, next) => {
   }
   next();
 };
+
+// Optimize error handling in auth controllers

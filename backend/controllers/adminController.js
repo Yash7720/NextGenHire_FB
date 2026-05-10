@@ -386,3 +386,5 @@ exports.getDashboardStats = async (req, res) => {
 // Finalize core authentication flow
 
 // Implement JWT generation and verification
+
+// Optimize error handling in auth controllers

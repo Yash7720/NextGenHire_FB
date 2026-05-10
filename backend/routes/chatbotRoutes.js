@@ -313,3 +313,5 @@ module.exports = router;
 // Add error handling for application routes - update 11
 
 // Refactor prompt generation for Gemini API - update 16
+
+// Refactor controller logic for scalability - update 21

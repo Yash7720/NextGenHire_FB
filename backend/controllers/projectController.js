@@ -215,3 +215,5 @@ exports.deleteProject = async (req, res) => {
 // Update application models and schemas - update 13
 
 // Add error handling for application routes - update 18
+
+// Refactor prompt generation for Gemini API - update 23

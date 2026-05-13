@@ -151,3 +151,5 @@ server.listen(PORT, () => {
 // Core configuration setup updated
 
 // Set up initial database connection logic
+
+// Refactor server startup and middleware pipeline

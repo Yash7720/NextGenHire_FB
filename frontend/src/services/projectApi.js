@@ -6,6 +6,7 @@ const BASE_URL = 'http://localhost:5002'
  * @param {object} params
  * @param {File}   params.file      — the .zip File object from the file input
  * @param {string} params.liveLink  — live preview URL
+ * @param {string} params.githubLink — GitHub repository URL
  * @param {string} params.userId    — MongoDB user _id
  * @param {string} params.courseId  — course identifier (e.g. "react")
  * @returns {Promise<object>}       — parsed JSON response from backend
@@ -20,9 +21,11 @@ const BASE_URL = 'http://localhost:5002'
  * @param {string} params.techStack    — tech stack (comma separated)
  * @param {string} params.studentId    — MongoDB user _id
  * @param {string} params.courseId     — course identifier
+ * @param {string} params.liveLink     — live preview URL
+ * @param {string} params.githubLink   — GitHub repository URL
  * @returns {Promise<object>}          — parsed JSON response
  */
-export async function submitProject({ file, projectTitle, description, techStack, studentId, courseId, liveLink }) {
+export async function submitProject({ file, projectTitle, description, techStack, studentId, courseId, liveLink, githubLink }) {
   const formData = new FormData()
   formData.append('projectTitle', projectTitle)
   formData.append('description', description)
@@ -31,6 +34,7 @@ export async function submitProject({ file, projectTitle, description, techStack
   formData.append('userId', studentId) // Alias for backward compatibility
   formData.append('courseId', courseId)
   if (liveLink) formData.append('liveLink', liveLink)
+  formData.append('githubLink', githubLink)
   formData.append('file', file) // File added last for better streaming performance
 
   const token = localStorage.getItem('token')

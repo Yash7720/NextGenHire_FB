@@ -22,3 +22,4 @@ export const auth = getAuth(app);
 // Providers
 export const googleProvider = new GoogleAuthProvider();
 export const githubProvider = new GithubAuthProvider();
+githubProvider.addScope('user:email');

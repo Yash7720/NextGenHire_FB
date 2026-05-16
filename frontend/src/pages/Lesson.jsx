@@ -3,6 +3,7 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { getLessonsByCourseAndChapter } from '../services/lessonApi';
 import ProgressBar from '../components/ui/ProgressBar';
 import { useOutletContext } from 'react-router-dom';
+import CodeCompiler from '../components/ui/CodeCompiler';
 
 export default function Lesson() {
   const { course, chapter } = useParams();
@@ -179,6 +180,25 @@ export default function Lesson() {
                 </div>
               </div>
             )}
+
+            {/* Interactive Compiler */}
+            <div className="mb-8 mt-12 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">💻</span>
+                <div>
+                  <h3 className="font-orbitron text-lg text-cyan mb-0 tracking-widest">CODE PLAYGROUND</h3>
+                  <p className="text-xs text-slate-400 m-0">Practice writing your own code or try the examples!</p>
+                </div>
+              </div>
+              <CodeCompiler 
+                defaultLanguage={course} 
+                defaultCode={
+                  course === 'css' && selectedLesson.example && !selectedLesson.example.includes('<style')
+                    ? `<!DOCTYPE html>\n<html>\n<body>\n  <!-- HTML Elements to style -->\n  <div id="main-content">\n    <h2 class="highlight">Hello CSS!</h2>\n    <p>Edit this HTML and the CSS below to see changes.</p>\n  </div>\n  <section>\n    <h2>Section Title</h2>\n  </section>\n\n  <style>\n${selectedLesson.example}\n  </style>\n</body>\n</html>`
+                    : selectedLesson.example || ''
+                } 
+              />
+            </div>
           </div>
 
           {/* Navigation Bottom Footer */}

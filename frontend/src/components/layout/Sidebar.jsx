@@ -58,9 +58,9 @@ export default function Sidebar({
             className="w-10 h-10 rounded-full flex items-center justify-center text-xl border-2 border-cyan shrink-0"
             style={{ background: 'linear-gradient(135deg,#00f5ff,#8b5cf6)', boxShadow: '0 0 14px rgba(0,245,255,0.4)' }}
           >{dAvatar}</div>
-          <div>
-            <div className="text-[13px] font-semibold leading-tight">{dName}</div>
-            <div className="text-[10px] text-slate-500">{dEmail}</div>
+          <div className="min-w-0">
+            <div className="text-[13px] font-semibold leading-tight truncate">{dName}</div>
+            <div className="text-[10px] text-slate-500 truncate" title={dEmail}>{dEmail}</div>
           </div>
         </div>
 

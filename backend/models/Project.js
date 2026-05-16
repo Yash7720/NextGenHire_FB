@@ -63,6 +63,13 @@ const ProjectSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Mandatory GitHub Repository URL
+    githubLink: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     // Backward compatibility field (will store placeholder if needed)
     zipFile: {
       type: String,

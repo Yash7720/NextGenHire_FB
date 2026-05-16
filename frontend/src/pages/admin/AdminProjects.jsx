@@ -172,12 +172,12 @@ export default function AdminProjects() {
         <div className="glass rounded-xl overflow-hidden">
           {/* Table header */}
           <div
-            className="grid grid-cols-[1.4fr_1.6fr_1fr_0.8fr_1fr_1.2fr_0.8fr] gap-4 px-6 py-4 bg-slate-900/50 border-b border-white/5 text-[10px] font-orbitron tracking-widest text-slate-500 uppercase"
+            className="grid grid-cols-[1.4fr_1.6fr_1fr_1fr_1fr_1.2fr_0.8fr] gap-4 px-6 py-4 bg-slate-900/50 border-b border-white/5 text-[10px] font-orbitron tracking-widest text-slate-500 uppercase"
           >
             <span>Student</span>
             <span>Project Details</span>
             <span>Tech Stack</span>
-            <span>Preview</span>
+            <span>Links</span>
             <span>Course</span>
             <span>Submission Date</span>
             <span className="text-right">Action</span>
@@ -189,7 +189,7 @@ export default function AdminProjects() {
               <div
                 key={p._id || i}
                 onClick={() => setSelected(p)}
-                className="grid grid-cols-[1.4fr_1.6fr_1fr_0.8fr_1fr_1.2fr_0.8fr] gap-4 px-6 py-6 items-center hover:bg-white/[0.04] active:bg-white/[0.08] transition-all cursor-pointer group"
+                className="grid grid-cols-[1.4fr_1.6fr_1fr_1fr_1fr_1.2fr_0.8fr] gap-4 px-6 py-6 items-center hover:bg-white/[0.04] active:bg-white/[0.08] transition-all cursor-pointer group"
               >
                 {/* Student */}
                 <div className="flex items-center gap-3">
@@ -229,14 +229,19 @@ export default function AdminProjects() {
                   )}
                 </div>
 
-                {/* Preview Link */}
-                <div onClick={e => e.stopPropagation()}>
-                  {p.liveLink ? (
-                    <a href={p.liveLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan/10 border border-cyan/20 text-cyan text-[10px] font-bold hover:bg-cyan hover:text-black transition-all">
-                      🔗 VIEW
+                {/* Links */}
+                <div onClick={e => e.stopPropagation()} className="flex flex-col gap-1.5 items-start">
+                  {p.githubLink ? (
+                    <a href={p.githubLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-white text-[10px] font-bold hover:bg-white hover:text-black transition-all">
+                      <span className="text-xs">🐙</span> GITHUB
                     </a>
                   ) : (
-                    <span className="text-[9px] text-slate-600 italic">No link</span>
+                    <span className="text-[9px] text-slate-600 italic">No GitHub</span>
+                  )}
+                  {p.liveLink && (
+                    <a href={p.liveLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan/10 border border-cyan/20 text-cyan text-[10px] font-bold hover:bg-cyan hover:text-black transition-all">
+                      🔗 VIEW LIVE
+                    </a>
                   )}
                 </div>
 
@@ -337,6 +342,21 @@ export default function AdminProjects() {
                 <div>
                   <h3 className="text-[10px] font-orbitron text-slate-500 uppercase tracking-widest mb-3">Links & Assets</h3>
                   <div className="space-y-3">
+                    {selected.githubLink ? (
+                      <a 
+                        href={selected.githubLink} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-orbitron font-bold text-xs tracking-widest hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] transition-all"
+                      >
+                        🐙 GITHUB REPO
+                      </a>
+                    ) : (
+                      <div className="w-full py-3 rounded-xl bg-slate-800/50 border border-white/5 text-slate-600 font-orbitron font-bold text-xs text-center tracking-widest">
+                        NO GITHUB REPO
+                      </div>
+                    )}
+
                     {selected.liveLink ? (
                       <a 
                         href={selected.liveLink} 

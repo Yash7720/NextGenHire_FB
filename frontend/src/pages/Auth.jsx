@@ -125,6 +125,9 @@ const ERROR_ICONS = {
   'Invalid Password':   '🔒',
   'User Already Exists':'⚠️',
   'User Not Found':     '👤',
+  'Popup Blocked':      '🚫',
+  'Account Conflict':   '🔀',
+  'Config Missing':     '⚙️',
 }
 
 // ── Toast component ───────────────────────────────────────────────
@@ -134,7 +137,7 @@ function ErrorToast({ message, onClose }) {
     return () => clearTimeout(t)
   }, [message, onClose])
 
-  const icon = ERROR_ICONS[message] ?? '❌'
+  const icon = Object.entries(ERROR_ICONS).find(([key]) => message.startsWith(key))?.[1] ?? '❌'
 
   return (
     <div
@@ -291,10 +294,13 @@ export default function Auth({ mode }) {
       const result   = await signInWithPopup(auth, provider)
       const user     = result.user
 
+      // Fallback for missing email (common with GitHub if user hasn't made it public)
+      const userEmail = user.email || `${user.uid}@github.com`
+
       // Sync with our MongoDB backend
       const syncedUser = await syncSocialUser({
         name:        user.displayName || 'Warrior',
-        email:       user.email,
+        email:       userEmail,
         firebaseUid: user.uid,
         profilePic:  user.photoURL,
       })
@@ -308,9 +314,20 @@ export default function Auth({ mode }) {
       }
     } catch (err) {
       console.error("[Auth] Social login error:", err)
-      const msg = err?.code === 'auth/popup-blocked' 
-        ? 'Popup blocked! Please allow popups.' 
-        : err?.message || 'Social login failed'
+      
+      let msg = err?.message || 'Social login failed'
+      
+      // Better user-facing messages for Firebase codes
+      if (err?.code === 'auth/popup-blocked') {
+        msg = 'Popup blocked! Please allow popups.'
+      } else if (err?.code === 'auth/account-exists-with-different-credential') {
+        msg = 'Account Conflict: An account already exists with this email but a different provider. Please use your original login method.'
+      } else if (err?.code === 'auth/operation-not-allowed' || err?.code === 'auth/configuration-not-found') {
+        msg = 'Config Missing: This login method is not yet fully configured in the Firebase console.'
+      } else if (msg.includes('auth/invalid-credential')) {
+        msg = 'Invalid Credential: The social login session expired or is invalid.'
+      }
+
       setErrorMsg(msg)
     } finally {
       setLoading(false)

@@ -13,7 +13,7 @@ exports.submitProject = async (req, res) => {
     console.log("[debug] submitProject hit! Body:", req.body);
     console.log("[debug] submitProject File:", req.file ? { name: req.file.originalname, size: req.file.size } : "No file");
     
-    const { studentId, userId, projectTitle, description, techStack, courseId, liveLink } = req.body;
+    const { studentId, userId, projectTitle, description, techStack, courseId, liveLink, githubLink } = req.body;
     const effectiveStudentId = studentId || userId;
     const file = req.file;
 
@@ -21,8 +21,8 @@ exports.submitProject = async (req, res) => {
       return res.status(400).json({ success: false, error: "Please upload a .zip file." });
     }
 
-    if (!effectiveStudentId || !projectTitle || !description) {
-      return res.status(400).json({ success: false, error: "Missing required project details (studentId/userId required)." });
+    if (!effectiveStudentId || !projectTitle || !description || !githubLink) {
+      return res.status(400).json({ success: false, error: "Missing required project details (studentId, title, description, and GitHub link required)." });
     }
 
     // 1. Prepare techStack array (parse if it's a string)
@@ -68,6 +68,7 @@ exports.submitProject = async (req, res) => {
       fileSize,
       courseId: courseId || "general",
       liveLink,
+      githubLink,
       zipFile: `gridfs/${fileId}` // placeholder for legacy UI compatibility
     });
 

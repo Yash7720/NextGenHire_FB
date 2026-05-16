@@ -125,6 +125,7 @@ function ProjectSubmitModal({ open, onClose, courseId, onSuccess }) {
   const [description, setDescription]   = useState('')
   const [techStack, setTechStack]       = useState('')
   const [liveLink, setLiveLink]         = useState('')
+  const [githubLink, setGithubLink]     = useState('')
   const [loading, setLoading]           = useState(false)
   const [error, setError]               = useState('')
   const [toast, setToast]               = useState('')
@@ -138,6 +139,7 @@ function ProjectSubmitModal({ open, onClose, courseId, onSuccess }) {
       setDescription('')
       setTechStack('')
       setLiveLink('')
+      setGithubLink('')
       setError('')
       setToast('')
       setLoading(false)
@@ -154,6 +156,13 @@ function ProjectSubmitModal({ open, onClose, courseId, onSuccess }) {
     if (liveLink.trim()) {
       try { new URL(liveLink) } catch { return setError('Please enter a valid URL (http/https)') }
     }
+    if (!githubLink.trim()) return setError('Please enter your GitHub repository link')
+    try { 
+      const url = new URL(githubLink);
+      if (!url.hostname.includes('github.com')) {
+         return setError('Please enter a valid GitHub repository URL');
+      }
+    } catch { return setError('Please enter a valid GitHub URL (http/https)') }
     if (!file) return setError('Please select a .zip file')
     
     const current   = userApi.getCurrentUser()
@@ -168,6 +177,7 @@ function ProjectSubmitModal({ open, onClose, courseId, onSuccess }) {
         description, 
         techStack, 
         liveLink,
+        githubLink,
         studentId, 
         courseId 
       })
@@ -310,6 +320,24 @@ function ProjectSubmitModal({ open, onClose, courseId, onSuccess }) {
               style={{
                 width:'100%', boxSizing:'border-box', background:'rgba(15,22,40,0.8)',
                 border:`1px solid ${liveLink ? 'rgba(0,245,255,0.4)' : 'rgba(42,63,106,0.8)'}`,
+                borderRadius:8, padding:'11px 14px', color:'#e2e8f0', fontSize:13, outline:'none', transition:'all 0.2s',
+              }}
+            />
+          </div>
+
+          {/* GitHub Repository Link */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display:'block', fontFamily:'Orbitron,sans-serif', fontSize:10, letterSpacing:2, color:'#94a3b8', marginBottom:8 }}>
+              GITHUB REPOSITORY LINK <span style={{ color: '#ef4444' }}>*</span>
+            </label>
+            <input
+              type="url"
+              placeholder="https://github.com/username/repo"
+              value={githubLink}
+              onChange={(e) => setGithubLink(e.target.value)}
+              style={{
+                width:'100%', boxSizing:'border-box', background:'rgba(15,22,40,0.8)',
+                border:`1px solid ${githubLink ? 'rgba(0,245,255,0.4)' : 'rgba(42,63,106,0.8)'}`,
                 borderRadius:8, padding:'11px 14px', color:'#e2e8f0', fontSize:13, outline:'none', transition:'all 0.2s',
               }}
             />

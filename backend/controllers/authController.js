@@ -60,29 +60,36 @@ exports.firebaseLogin = async (req, res) => {
   try {
     const { name, email, firebaseUid, profilePic } = req.body;
 
-    if (!email || !firebaseUid) {
-      return res.status(400).json({ message: "Email and Firebase UID are required" });
+    if (!firebaseUid) {
+      return res.status(400).json({ message: "Firebase UID is required" });
     }
 
-    // 1. Find user by Firebase UID or Email
-    let user = await User.findOne({ 
-      $or: [{ firebaseUid }, { email }] 
-    });
+    // 1. Find user by Firebase UID first (most reliable)
+    let user = await User.findOne({ firebaseUid });
+
+    // 2. If not found by UID, try finding by Email
+    if (!user && email) {
+      user = await User.findOne({ email });
+    }
 
     if (user) {
-      // Update existing user with firebaseUid if they only had email before
+      // Update existing user with firebaseUid if they only had email before (Linking)
       if (!user.firebaseUid) {
         user.firebaseUid = firebaseUid;
       }
-      // Update profile pic if provided
-      if (profilePic) {
+      // Update profile pic if provided and user doesn't have one
+      if (profilePic && !user.profilePic) {
         user.profilePic = profilePic;
       }
       await user.save();
     } else {
-      // 2. Create new user
+      // 3. Create new user — Email is still required by the User model
+      if (!email) {
+        return res.status(400).json({ message: "Email is required to create a new account" });
+      }
+
       user = await User.create({
-        name,
+        name: name || "Warrior",
         email,
         firebaseUid,
         profilePic,

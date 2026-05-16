@@ -362,3 +362,5 @@ exports.seedTestData = async (req, res) => {
 // Define User schema and validation rules
 
 // Add role-based access control for admins
+
+// Add password hashing logic to User model

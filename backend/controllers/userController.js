@@ -348,3 +348,5 @@ exports.seedTestData = async (req, res) => {
 // Auth controller updates
 
 // Define User schema and validation rules
+
+// Add password hashing logic to User model

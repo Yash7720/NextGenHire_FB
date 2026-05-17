@@ -217,3 +217,5 @@ exports.deleteProject = async (req, res) => {
 // Add error handling for application routes - update 18
 
 // Refactor prompt generation for Gemini API - update 23
+
+// Refactor controller logic for scalability - update 28

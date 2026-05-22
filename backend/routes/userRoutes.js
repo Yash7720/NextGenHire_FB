@@ -43,3 +43,5 @@ router.post("/seed-test-data", protect, admin, ctrl.seedTestData);    // blocked
 module.exports = router;
 
 // Create user registration and login endpoints
+
+// Secure API routes with authentication middleware

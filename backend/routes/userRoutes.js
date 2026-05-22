@@ -47,3 +47,5 @@ module.exports = router;
 // Secure API routes with authentication middleware
 
 // Create user registration and login endpoints
+
+// Secure API routes with authentication middleware

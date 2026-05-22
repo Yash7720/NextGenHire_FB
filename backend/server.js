@@ -167,3 +167,5 @@ server.listen(PORT, () => {
 // Create user registration and login endpoints
 
 // Refactor server startup and middleware pipeline
+
+// Secure API routes with authentication middleware

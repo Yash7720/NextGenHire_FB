@@ -94,3 +94,5 @@ module.exports = mongoose.model("Project", ProjectSchema, "projects");
 // Update project submission endpoints - update 24
 
 // Implement AI chatbot logic - update 29
+
+// Update application models and schemas - update 34

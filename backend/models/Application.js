@@ -66,3 +66,5 @@ module.exports = mongoose.model("Application", applicationSchema);
 // Add error handling for application routes - update 25
 
 // Refactor prompt generation for Gemini API - update 30
+
+// Refactor controller logic for scalability - update 35

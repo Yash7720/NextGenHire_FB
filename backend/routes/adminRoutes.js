@@ -45,3 +45,5 @@ router.get("/applications", getAllApplications);
 
 module.exports = router;
 // Add role-based access control for admins
+
+// Update JWT expiration and security headers

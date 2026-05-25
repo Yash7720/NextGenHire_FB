@@ -364,3 +364,5 @@ exports.seedTestData = async (req, res) => {
 // Add role-based access control for admins
 
 // Add password hashing logic to User model
+
+// Update JWT expiration and security headers

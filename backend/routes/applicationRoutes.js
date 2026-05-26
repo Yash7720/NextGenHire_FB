@@ -52,3 +52,5 @@ module.exports = router;
 // Update application models and schemas - update 27
 
 // Add error handling for application routes - update 32
+
+// Refactor prompt generation for Gemini API - update 37

@@ -221,3 +221,5 @@ exports.deleteProject = async (req, res) => {
 // Refactor controller logic for scalability - update 28
 
 // Optimize AI fallback responses - update 33
+
+// Update project submission endpoints - update 38

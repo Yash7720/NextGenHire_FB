@@ -82,3 +82,5 @@ exports.optionalAuth = async (req, res, next) => {
 // Refactor route structure for better scalability
 
 // Optimize error handling in auth controllers
+
+// Refactor route structure for better scalability

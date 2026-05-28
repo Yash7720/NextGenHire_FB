@@ -390,3 +390,5 @@ exports.getDashboardStats = async (req, res) => {
 // Optimize error handling in auth controllers
 
 // Implement admin dashboard data fetching routes
+
+// Refactor route structure for better scalability

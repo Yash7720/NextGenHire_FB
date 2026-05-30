@@ -321,3 +321,5 @@ module.exports = router;
 // Update project submission endpoints - update 31
 
 // Implement AI chatbot logic - update 36
+
+// Update application models and schemas - update 41

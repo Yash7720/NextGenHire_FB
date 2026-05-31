@@ -169,3 +169,5 @@ server.listen(PORT, () => {
 // Refactor server startup and middleware pipeline
 
 // Secure API routes with authentication middleware
+
+// Add input validation to user registration

@@ -159,3 +159,5 @@ server.listen(PORT, () => {
 // Set up initial database connection logic
 
 // Refactor server startup and middleware pipeline
+
+// Add input validation to user registration

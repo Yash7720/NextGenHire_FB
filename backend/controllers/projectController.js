@@ -223,3 +223,5 @@ exports.deleteProject = async (req, res) => {
 // Optimize AI fallback responses - update 33
 
 // Update project submission endpoints - update 38
+
+// Implement AI chatbot logic - update 43

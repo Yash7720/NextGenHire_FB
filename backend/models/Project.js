@@ -98,3 +98,5 @@ module.exports = mongoose.model("Project", ProjectSchema, "projects");
 // Update application models and schemas - update 34
 
 // Add error handling for application routes - update 39
+
+// Refactor prompt generation for Gemini API - update 44

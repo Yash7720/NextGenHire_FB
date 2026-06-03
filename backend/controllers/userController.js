@@ -350,3 +350,5 @@ exports.seedTestData = async (req, res) => {
 // Define User schema and validation rules
 
 // Add password hashing logic to User model
+
+// Optimize database query performance for users

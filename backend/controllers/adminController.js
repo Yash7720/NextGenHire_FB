@@ -392,3 +392,5 @@ exports.getDashboardStats = async (req, res) => {
 // Implement admin dashboard data fetching routes
 
 // Refactor route structure for better scalability
+
+// Finalize core authentication flow

@@ -290,7 +290,15 @@ export default function Auth({ mode }) {
     setErrorMsg(null)
     setLoading(true)
     try {
-      const provider = providerName === 'google' ? googleProvider : githubProvider
+      let provider;
+      if (providerName === 'google') {
+        provider = new googleProvider.constructor(); // creates new GoogleAuthProvider
+        provider.setCustomParameters({ prompt: 'select_account' });
+      } else {
+        provider = new githubProvider.constructor(); // creates new GithubAuthProvider
+        provider.addScope('user:email');
+      }
+
       const result   = await signInWithPopup(auth, provider)
       const user     = result.user
 
@@ -316,6 +324,11 @@ export default function Auth({ mode }) {
       console.error("[Auth] Social login error:", err)
       
       let msg = err?.message || 'Social login failed'
+      
+      // If the user simply closed the popup, don't show an error.
+      if (err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
+        return;
+      }
       
       // Better user-facing messages for Firebase codes
       if (err?.code === 'auth/popup-blocked') {

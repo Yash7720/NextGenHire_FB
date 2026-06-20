@@ -175,7 +175,13 @@ export default function ChatBot() {
       .filter((m, i) => !(i === 0 && m.role === 'model'))
 
     try {
-      const res = await fetch("http://localhost:5002/api/chat", {
+      const rawBase = import.meta.env.VITE_API_URL || 
+        (typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+          ? `http://${window.location.hostname}:5002` 
+          : 'http://localhost:5002');
+      const BASE_URL = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+
+      const res = await fetch(`${BASE_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

@@ -214,6 +214,16 @@ int main() {
 
 🎮 **Level up tip**: Our **C++ Course** covers OOP, STL, and DSA to prepare you for coding interviews!`,
 
+  code: `To write and run code on **NextGenHire**, simply use the **Code Compiler** built into our courses! 💻
+
+Here's how to use it:
+1. Navigate to any **Lesson** inside a course.
+2. You'll see the integrated **Monaco Editor** on the screen.
+3. Select your language from the dropdown (HTML, JS, Python, C++, Java).
+4. Write your code and click the **RUN CODE** button to execute it instantly!
+
+If you are working on a **Final Project**, you will write your code locally using VS Code and then submit your **GitHub Repository Link** for grading! 🚀`,
+
   default: `Hey there! 👋 I'm the **NextGenHire AI Mentor**.
 
 I can help you with:
@@ -237,6 +247,7 @@ function getFallbackReply(message) {
   if (msg.includes("javascript") || msg.includes("js"))                          return FALLBACK_RESPONSES.javascript;
   if (msg.includes("xp") || msg.includes("level") || msg.includes("strobe") || msg.includes("streak") || msg.includes("leaderboard")) return FALLBACK_RESPONSES.xp;
   if (msg.includes("job") || msg.includes("hire") || msg.includes("apply") || msg.includes("resume")) return FALLBACK_RESPONSES.job;
+  if (msg.includes("code") || msg.includes("run") || msg.includes("compiler") || msg.includes("project")) return FALLBACK_RESPONSES.code;
   return FALLBACK_RESPONSES.default;
 }
 

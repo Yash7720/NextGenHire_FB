@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
+import { emmetHTML, emmetCSS, emmetJSX } from 'emmet-monaco-es';
 
 const LANGUAGE_MAP = {
   javascript: { judge0Id: 93, defaultCode: 'console.log("Hello, World!");' },
@@ -11,6 +12,58 @@ const LANGUAGE_MAP = {
   css: { judge0Id: null, defaultCode: '<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    /* Write your CSS here! */\n    body { font-family: sans-serif; text-align: center; margin-top: 50px; background: #0f1628; color: white; }\n    h1 { color: #00f5ff; text-shadow: 0 0 10px #00f5ff; }\n  </style>\n</head>\n<body>\n  <h1>CSS Playground</h1>\n  <p>Edit the styles above to see the changes.</p>\n</body>\n</html>' },
   react: { judge0Id: null, defaultCode: '<!DOCTYPE html>\n<html>\n<body>\n  <!-- For full React, we recommend using Create React App. Here is a basic HTML playground. -->\n  <h1>React/Web Playground</h1>\n  <p>Write HTML, CSS, or script tags here.</p>\n</body>\n</html>' }
 };
+
+let snippetsRegistered = false;
+
+function registerCustomSnippets(monaco) {
+  if (snippetsRegistered) return;
+  snippetsRegistered = true;
+
+  const createProvider = (snippets) => ({
+    provideCompletionItems: (model, position) => {
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn
+      };
+      const suggestions = snippets.map(s => ({
+        label: s.label,
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        insertText: s.insertText,
+        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        documentation: s.documentation,
+        range: range
+      }));
+      return { suggestions };
+    }
+  });
+
+  monaco.languages.registerCompletionItemProvider('python', createProvider([
+    { label: 'def', insertText: 'def ${1:name}(${2:args}):\n\t${3:pass}', documentation: 'Define function' },
+    { label: 'class', insertText: 'class ${1:Name}:\n\tdef __init__(self):\n\t\t${2:pass}', documentation: 'Define class' },
+    { label: 'if', insertText: 'if ${1:condition}:\n\t${2:pass}', documentation: 'If statement' },
+    { label: 'for', insertText: 'for ${1:i} in range(${2:10}):\n\t${3:pass}', documentation: 'For loop' },
+    { label: 'while', insertText: 'while ${1:condition}:\n\t${2:pass}', documentation: 'While loop' }
+  ]));
+
+  monaco.languages.registerCompletionItemProvider('java', createProvider([
+    { label: 'sout', insertText: 'System.out.println(${1});', documentation: 'Print to console' },
+    { label: 'main', insertText: 'public static void main(String[] args) {\n\t${1}\n}', documentation: 'Main method' },
+    { label: 'class', insertText: 'public class ${1:Name} {\n\t${2}\n}', documentation: 'Class definition' },
+    { label: 'if', insertText: 'if (${1:condition}) {\n\t${2}\n}', documentation: 'If statement' },
+    { label: 'for', insertText: 'for (int i = 0; i < ${1:10}; i++) {\n\t${2}\n}', documentation: 'For loop' }
+  ]));
+
+  monaco.languages.registerCompletionItemProvider('cpp', createProvider([
+    { label: 'include', insertText: '#include <${1:iostream}>', documentation: 'Include statement' },
+    { label: 'main', insertText: 'int main() {\n\t${1}\n\treturn 0;\n}', documentation: 'Main function' },
+    { label: 'cout', insertText: 'std::cout << ${1} << std::endl;', documentation: 'Print to console' },
+    { label: 'if', insertText: 'if (${1:condition}) {\n\t${2}\n}', documentation: 'If statement' },
+    { label: 'for', insertText: 'for (int i = 0; i < ${1:10}; i++) {\n\t${2}\n}', documentation: 'For loop' }
+  ]));
+}
 
 export default function CodeCompiler({ defaultLanguage = 'javascript', defaultCode = '' }) {
   const getNormalizedLang = (lang) => {
@@ -31,6 +84,13 @@ export default function CodeCompiler({ defaultLanguage = 'javascript', defaultCo
     setCode(defaultCode || LANGUAGE_MAP[lang].defaultCode);
     setOutput('');
   }, [defaultLanguage, defaultCode]);
+
+  const handleEditorDidMount = (editor, monaco) => {
+    emmetHTML(monaco);
+    emmetCSS(monaco);
+    emmetJSX(monaco);
+    registerCustomSnippets(monaco);
+  };
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
@@ -145,6 +205,7 @@ export default function CodeCompiler({ defaultLanguage = 'javascript', defaultCo
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value)}
+            onMount={handleEditorDidMount}
             options={{
               minimap: { enabled: false },
               fontSize: 14,
@@ -152,7 +213,15 @@ export default function CodeCompiler({ defaultLanguage = 'javascript', defaultCo
               padding: { top: 16 },
               scrollBeyondLastLine: false,
               roundedSelection: false,
-              scrollbar: { useShadows: false, verticalScrollbarSize: 8, horizontalScrollbarSize: 8 }
+              scrollbar: { useShadows: false, verticalScrollbarSize: 8, horizontalScrollbarSize: 8 },
+              quickSuggestions: true,
+              suggestOnTriggerCharacters: true,
+              autoClosingBrackets: 'always',
+              autoClosingQuotes: 'always',
+              autoIndent: 'full',
+              formatOnType: true,
+              formatOnPaste: true,
+              snippetSuggestions: 'top'
             }}
             loading={
               <div className="flex items-center justify-center h-full text-cyan font-orbitron animate-pulse text-sm">

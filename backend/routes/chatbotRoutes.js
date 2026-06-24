@@ -3,8 +3,10 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const router = express.Router();
 
-// ── Initialize Gemini AI ─────────────────────────────────────────────────────
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "REPLACE_WITH_YOUR_KEY");
+// ── Parse API Keys (Supports comma-separated keys) ───────────────────────────
+const rawKeys = process.env.GEMINI_API_KEY || "REPLACE_WITH_YOUR_KEY";
+const apiKeys = rawKeys.split(",").map(k => k.trim()).filter(k => k);
+let currentKeyIndex = 0; // Tracks which key we are currently using
 
 const SYSTEM_INSTRUCTION = `
 You are the **NextGenHire AI Mentor**, the official AI assistant of the NextGenHire platform.
@@ -50,11 +52,7 @@ You are the **NextGenHire AI Mentor**, the official AI assistant of the NextGenH
 - Keep responses focused and relevant to NextGenHire.
 `;
 
-// Primary model (best quality) and fallback model (separate quota pool)
-// 3 models with SEPARATE quota pools — if one is rate-limited, the next one kicks in
-const primaryModel  = genAI.getGenerativeModel({ model: "gemini-2.0-flash",      systemInstruction: SYSTEM_INSTRUCTION });
-const fallbackModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite", systemInstruction: SYSTEM_INSTRUCTION });
-const lastResort    = genAI.getGenerativeModel({ model: "gemma-3-4b-it" }); // Doesn't support systemInstruction — we inject context manually
+// Models will be instantiated dynamically inside the route to support key rotation.
 
 // ── Helper: attempt a chat with a given model ────────────────────────────────
 async function tryChat(model, message, cleanHistory, needsContext = false) {
@@ -273,21 +271,42 @@ router.post("/", async (req, res) => {
         parts: [{ text: String(m.parts[0].text) }]
       }));
 
-    // Try models in order: primary → fallback → last resort → offline
     let reply;
-    const models = [
-      { model: primaryModel,  name: "gemini-2.0-flash",      needsContext: false },
-      { model: fallbackModel, name: "gemini-2.0-flash-lite",  needsContext: false },
-      { model: lastResort,    name: "gemma-3-4b-it",          needsContext: true  },
-    ];
+    let success = false;
 
-    for (const { model, name, needsContext } of models) {
-      try {
-        reply = await tryChat(model, message, cleanHistory, needsContext);
-        console.log(`[chatbot] ✅ Success (${name})`);
-        break;
-      } catch (err) {
-        console.warn(`[chatbot] ${name} failed:`, err.message?.slice(0, 100));
+    // Loop through available API keys starting from the currently active one
+    for (let i = 0; i < apiKeys.length && !success; i++) {
+      const activeKeyIndex = (currentKeyIndex + i) % apiKeys.length;
+      const activeKey = apiKeys[activeKeyIndex];
+      
+      const genAI = new GoogleGenerativeAI(activeKey);
+      
+      // Initialize models with the current key
+      const primaryModel  = genAI.getGenerativeModel({ model: "gemini-2.0-flash", systemInstruction: SYSTEM_INSTRUCTION });
+      const fallbackModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite", systemInstruction: SYSTEM_INSTRUCTION });
+      const lastResort    = genAI.getGenerativeModel({ model: "gemma-3-4b-it" });
+
+      const models = [
+        { model: primaryModel,  name: "gemini-2.0-flash",      needsContext: false },
+        { model: fallbackModel, name: "gemini-2.0-flash-lite", needsContext: false },
+        { model: lastResort,    name: "gemma-3-4b-it",         needsContext: true  },
+      ];
+
+      for (const { model, name, needsContext } of models) {
+        try {
+          reply = await tryChat(model, message, cleanHistory, needsContext);
+          console.log(`[chatbot] ✅ Success (${name}) using Key #${activeKeyIndex + 1}`);
+          success = true;
+          
+          // If we had to switch to a backup key, make it the new default
+          if (i > 0) {
+            currentKeyIndex = activeKeyIndex;
+            console.log(`[chatbot] 🔄 Switched default API key to Key #${currentKeyIndex + 1}`);
+          }
+          break; // Break inner model loop
+        } catch (err) {
+          console.warn(`[chatbot] ${name} failed with Key #${activeKeyIndex + 1}:`, err.message?.slice(0, 100));
+        }
       }
     }
 

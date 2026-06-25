@@ -3,7 +3,7 @@ import { fetchAdminProjects, downloadProject, deleteProjectSubmission } from '..
 import { getSocket } from '../../services/socket'
 import Modal from '../../components/ui/Modal'
 
-const BASE_URL = 'http://localhost:5002'
+import { BASE_URL } from '../../services/http'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(dateStr) {

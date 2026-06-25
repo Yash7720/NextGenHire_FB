@@ -3,7 +3,7 @@ const rawBase = import.meta.env.VITE_API_URL ||
     ? `http://${window.location.hostname}:5002` 
     : 'http://localhost:5002');
 
-const BASE_URL = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
+export const BASE_URL = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
 
 async function parseJsonSafe(res) {
   try {

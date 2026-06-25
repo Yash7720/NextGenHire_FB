@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5002'
+import { BASE_URL } from './http'
 const BASE     = '/api/applications'
 
 // ─────────────────────────────────────────────────────────────────────────────

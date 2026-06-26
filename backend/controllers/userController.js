@@ -46,6 +46,7 @@ function userPayload(user) {
     xp:               user.xp,
     coursesCompleted: user.coursesCompleted,
     streak:           user.streak,
+    lastLoginDate:    user.lastLoginDate,
     enrolledCourses:  user.enrolledCourses || [],
     score:            calcScore(user),
   };

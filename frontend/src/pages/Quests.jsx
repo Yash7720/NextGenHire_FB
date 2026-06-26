@@ -4,7 +4,7 @@ import ProgressBar from '../components/ui/ProgressBar'
 import { RARITY_COLORS } from '../data'
 
 export default function Quests() {
-  const { streak, claimedQuests, canSpinToday, spinWheel, dailyQuests, weeklyChallenges, claimQuestServer } = useOutletContext()
+  const { streak, claimedQuests, canSpinToday, spinWheel, dailyQuests, weeklyChallenges, claimQuestServer, user } = useOutletContext()
   const [spinning, setSpinning] = useState(false)
   const [spinResult, setSpinResult] = useState(null)
   
@@ -93,11 +93,32 @@ export default function Quests() {
             const now = new Date();
             const currentDayOfISOWeek = now.getDay() === 0 ? 6 : now.getDay() - 1; // 0 (Mon) to 6 (Sun)
             
-            // Highlight days leading up to today based on the streak count
-            const streakStartThisWeek = Math.max(0, currentDayOfISOWeek - streak + 1);
-            const active = streak > 0 && i >= streakStartThisWeek && i <= currentDayOfISOWeek;
+            let anchorDayOfISOWeek = currentDayOfISOWeek;
+            let actualStreak = streak;
             
-            const isToday = i === currentDayOfISOWeek
+            if (user?.lastLoginDate) {
+               const lastLogin = new Date(user.lastLoginDate);
+               const todayStr = now.toDateString();
+               const yesterday = new Date(now);
+               yesterday.setDate(yesterday.getDate() - 1);
+               
+               if (lastLogin.toDateString() === todayStr) {
+                  anchorDayOfISOWeek = currentDayOfISOWeek;
+               } else if (lastLogin.toDateString() === yesterday.toDateString()) {
+                  anchorDayOfISOWeek = yesterday.getDay() === 0 ? 6 : yesterday.getDay() - 1;
+               } else {
+                  // Streak is dead if they didn't log in today or yesterday
+                  actualStreak = 0;
+               }
+            } else if (streak === 0) {
+               actualStreak = 0;
+            }
+            
+            // Highlight days leading up to the anchor day based on the streak count
+            const streakStartThisWeek = Math.max(0, anchorDayOfISOWeek - actualStreak + 1);
+            const active = actualStreak > 0 && i >= streakStartThisWeek && i <= anchorDayOfISOWeek;
+            
+            const isToday = i === currentDayOfISOWeek;
 
             return (
               <div key={d} className="flex-1 text-center group">

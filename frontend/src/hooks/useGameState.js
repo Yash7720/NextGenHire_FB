@@ -256,13 +256,13 @@ export function useGameState() {
     }
   }, [setUserXP])
 
-  const addXpServer = useCallback(async (amount) => {
+  const addXpServer = useCallback(async (amount, source) => {
     try {
       const current = userApi.getCurrentUser()
       const userId = current?._id || current?.id
       if (!userId) return null
 
-      const updatedUser = await userApi.addXp({ userId, amount })
+      const updatedUser = await userApi.addXp({ userId, amount, source })
       if (updatedUser) setUserXPBoth(updatedUser) // Full merge
       return updatedUser
     } catch (err) {
@@ -384,7 +384,7 @@ export function useGameState() {
     setLastSpinDate(new Date().toDateString())
     try {
       // addXpServer already uses setUserXPBoth(updatedUser) which handles merging now
-      const updatedUser = await addXpServer(xpWon)
+      const updatedUser = await addXpServer(xpWon, 'spin')
       
       // Still show the local visual animation
       setXpAmount(xpWon)
@@ -548,7 +548,8 @@ export function useGameState() {
       setClaimedQuests(prev => (prev.includes(key) ? prev : [...prev, key]))
 
       if (updatedUser?.xp !== undefined) setUserXPBoth(updatedUser.xp)
-      else if (xpGained) await addXpServer(xpGained)
+      else if (res?.totalXP !== undefined) setUserXPBoth(res.totalXP)
+      else if (xpGained) await addXpServer(xpGained, 'claim')
 
       // Keep existing XP animation (same timing), but don't double-add if server already updated xp
       setXpAmount(xpGained)

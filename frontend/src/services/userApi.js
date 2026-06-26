@@ -77,10 +77,10 @@ export async function resetPassword(token, password) {
  * Award arbitrary XP (chapter complete, quest, job apply, spin wheel, etc.)
  * POST /api/user/add-xp
  */
-export async function addXp({ userId, amount }) {
+export async function addXp({ userId, amount, source }) {
   const data = await apiRequest('/api/user/add-xp', {
     method: 'POST',
-    body: { userId, amount },
+    body: { userId, amount, source },
   })
 
   const user = data?.user ?? data?.updatedUser ?? data

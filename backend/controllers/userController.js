@@ -166,7 +166,7 @@ exports.dailyLogin = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 exports.addXp = async (req, res) => {
   try {
-    const { userId, xp, amount } = req.body;
+    const { userId, xp, amount, source } = req.body;
 
     const xpToAdd =
       typeof amount === "number" ? amount :
@@ -187,12 +187,19 @@ exports.addXp = async (req, res) => {
     // Mapping XP amounts to quest types based on frontend gainXP() logic:
     // 5 XP = lesson, 50 XP = quiz, 200 XP = project/course
     const questController = require("./questController");
-    if (xpToAdd === 5) {
-      await questController.updateQuestProgress(req, userId, "lesson");
-    } else if (xpToAdd === 50) {
-      await questController.updateQuestProgress(req, userId, "quiz");
-    } else if (xpToAdd === 20) {
-      await questController.updateQuestProgress(req, userId, "application");
+    if (source === "spin" || source === "claim") {
+      // Do not trigger any implicit quests for spin wheel or claiming quests
+    } else if (source) {
+      await questController.updateQuestProgress(req, userId, source);
+    } else {
+      // Fallback for older API calls
+      if (xpToAdd === 5) {
+        await questController.updateQuestProgress(req, userId, "lesson");
+      } else if (xpToAdd === 50) {
+        await questController.updateQuestProgress(req, userId, "quiz");
+      } else if (xpToAdd === 20) {
+        await questController.updateQuestProgress(req, userId, "application");
+      }
     }
 
     emitRefresh(req);

@@ -92,8 +92,11 @@ export default function Quests() {
             // Or better: highlight up to the current day of the week based on streak.
             const now = new Date();
             const currentDayOfISOWeek = now.getDay() === 0 ? 6 : now.getDay() - 1; // 0 (Mon) to 6 (Sun)
-            const displayStreak = (streak % 7 === 0 && streak > 0) ? 7 : (streak % 7)
-            const active = i < displayStreak
+            
+            // Highlight days leading up to today based on the streak count
+            const streakStartThisWeek = Math.max(0, currentDayOfISOWeek - streak + 1);
+            const active = streak > 0 && i >= streakStartThisWeek && i <= currentDayOfISOWeek;
+            
             const isToday = i === currentDayOfISOWeek
 
             return (
